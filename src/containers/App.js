@@ -12,6 +12,7 @@ import Dashboard from 'containers/Main/Dashboard';
 import Faucet from 'containers/Main/Faucet';
 import Vote from 'containers/Main/Vote';
 import XVS from 'containers/Main/XVS';
+import VRT from 'containers/Main/VRT';
 import Market from 'containers/Main/Market';
 import Vault from 'containers/Main/Vault';
 import MarketDetail from 'containers/Main/MarketDetail';
@@ -65,6 +66,7 @@ class App extends React.Component {
                 <Route exact path="/market" component={Market} />
                 <Route exact path="/transaction" component={Transaction} />
                 <Route exact path="/vault" component={Vault} />
+                <Route exact path="/vrt" component={VRT} />
                 <Route exact path="/market/:asset" component={MarketDetail} />
                 <Route
                   exact
