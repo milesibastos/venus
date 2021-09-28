@@ -1,0 +1,111 @@
+.redeem-confirm-modal,
+.redeem-success-modal {
+    padding: 0;
+    border-radius: 16px;
+    .ant-modal-body {
+        padding: 24px;
+        border-radius: 16px;
+        background-color: var(--color-bg-primary);
+    }
+    .ant-modal-content {
+        border-radius: 16px;
+    }
+    .close-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.redeem-confirm-modal {
+    .title {
+        font-size: 14px;
+        line-height: 16px;
+        text-align: center;
+        color: #FFFFFF;
+    }
+
+    
+
+    .info-section {
+        background-color: var(--color-bg-main);
+        width: 100%;
+        margin-top: 43px;
+        margin-bottom: 24px;
+        padding: 12px 16px 0 12px;
+        border-radius: 8px;
+
+        .info-section-item {
+            display: flex;
+            justify-content: space-between;
+            color: #fff;
+            font-size: 14px;
+            line-height: 16px;
+            margin-bottom: 12px;
+
+            .info-item-title {
+                color: #a1a1a1;
+            }
+            img {
+                width: 16px;
+                height: 16px;
+                margin-right: 3px;
+                margin-top: -2px;
+
+            }
+        }
+    }
+    .redeem-modal-footer {
+        width: 100%;
+        display: flex;
+        color: #fff;
+        font-size: 14px;
+        line-height: 18px;
+        .redeem-modal-button {
+            border-radius: 8px;
+            width: 50%;
+            padding: 11px 0;
+            text-align: center;
+            cursor: pointer;
+        }
+        .redeem-modal-button-cancel {
+            background: #262B48;
+            margin-right: 16px;
+        }
+        .redeem-modal-button-confirm {
+            background: #EBBF6E;
+        }
+    }
+
+}
+
+.redeem-success-modal {
+    .ant-modal-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .success-img {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 16px;
+    }
+    .title {
+        line-height: 20px;
+        color: #fff;
+        margin-bottom: 8px;
+    }
+    .subtitle {
+        font-size: 14px;
+        line-height: 16px;
+        color: #76808F;
+        margin-bottom: 24px;
+    }
+    a {
+        font-size: 14px;
+        line-height: 16px;
+        color: #D0980B;
+    }
+}

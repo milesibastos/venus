@@ -402,6 +402,14 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
         </NavLink>
         <NavLink
           className="flex flex-start align-center"
+          to="/vrt"
+          activeClassName="active"
+        >
+          <Icon type="golden" theme="filled" />
+          <Label primary>Redeem VRT</Label>
+        </NavLink>
+        <NavLink
+          className="flex flex-start align-center"
           to="/transaction"
           activeClassName="active"
         >
