@@ -161,7 +161,7 @@ const formatNextCircleString = () => {
   return `2021-11-11`;
 };
 
-function VRT({ settings }) {
+function VRT({ settings, setSetting }) {
   const [redeemRatio, setRedeemRatio] = useState(new BigNumber(1));
   const [redeemableAmount, setRedeemableAmount] = useState(new BigNumber(0));
   const [nextCircle, setNextCircle] = useState(0);
@@ -304,6 +304,10 @@ function VRT({ settings }) {
                   onClick={() => {
                     if (!accountNotReady) {
                       setIsConfirmModalVisible(true);
+                    } else {
+                      setSetting({
+                        isOpenConnectModal: true
+                      });
                     }
                   }}
                 >
@@ -350,10 +354,11 @@ const mapStateToProps = ({ account }) => ({
 });
 
 const mapDispatchToProps = dispatch => {
-  const { getVoterAccounts } = accountActionCreators;
+  const { getVoterAccounts, setSetting } = accountActionCreators;
 
   return bindActionCreators(
     {
+      setSetting,
       getVoterAccounts
     },
     dispatch

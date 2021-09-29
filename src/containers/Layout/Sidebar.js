@@ -295,7 +295,6 @@ const abortController = new AbortController();
 const format = commaNumber.bindWith(',', '.');
 
 function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
-  const [isOpenModal, setIsOpenModal] = useState(false);
   const [isMarketInfoUpdating, setMarketInfoUpdating] = useState(false);
   const [error, setError] = useState('');
   const [web3, setWeb3] = useState(null);
@@ -305,6 +304,10 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
   const [wcUri, setWcUri] = useState(null);
 
   const defaultPath = history.location.pathname.split('/')[1];
+
+  function openModal(isOpen) {
+    setSetting({ isOpenConnectModal: isOpen });
+  }
 
   useEffect(() => {
     if (settings.walletType) {
@@ -405,10 +408,10 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
       setWeb3(tempWeb3);
       setError(null);
       setAwaiting(false);
-      setSetting({ 
+      setSetting({
         selectedAddress: tempAccounts[0],
-        latestBlockNumber,
-       });
+        latestBlockNumber
+      });
       metamaskWatcher = setTimeout(() => {
         clearTimeout(metamaskWatcher);
         handleWatch();
@@ -428,7 +431,9 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
       clearTimeout(metamaskWatcher);
       walletType = 'binance';
       setSetting({ walletType: 'binance' });
-      setError(MetaMaskClass.hasWeb3() ? '' : new Error(constants.NOT_INSTALLED));
+      setError(
+        MetaMaskClass.hasWeb3() ? '' : new Error(constants.NOT_INSTALLED)
+      );
       handleWatch();
     }
   };
@@ -482,7 +487,7 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
 
   useEffect(() => {
     if (accounts.length !== 0) {
-      setIsOpenModal(false);
+      openModal(false);
     }
     return function cleanup() {
       abortController.abort();
@@ -569,16 +574,20 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
       checkIsValidNetwork(settings.walletType)
     ) {
       window.ethereum.on('accountsChanged', accs => {
-        walletType = 'metamask'
+        walletType = 'metamask';
         setSetting({
           selectedAddress: accs[0],
           accountLoading: true,
           walletType: 'metamask'
         });
       });
-    } else if (window.BinanceChain && settings.walletType === 'binance' && checkIsValidNetwork(settings.walletType)) {
+    } else if (
+      window.BinanceChain &&
+      settings.walletType === 'binance' &&
+      checkIsValidNetwork(settings.walletType)
+    ) {
       window.BinanceChain.on('accountsChanged', accs => {
-        walletType = 'binance'
+        walletType = 'binance';
         setSetting({
           selectedAddress: accs[0],
           accountLoading: true,
@@ -736,8 +745,8 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M0 0H7.488L12 4.20571V16H0V0ZM1.92 14.1714H10.08V5.02857H6.72V1.82857H1.92V14.1714ZM3.84703 8.62036H8.16703V6.79179H3.84703V8.62036ZM3.84703 12.2775H8.16703V10.449H3.84703V12.2775Z"
               fill="white"
             />
@@ -787,7 +796,7 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
         <Button
           className="connect-btn"
           onClick={() => {
-            setIsOpenModal(true);
+            openModal(true);
           }}
         >
           {!settings.selectedAddress
@@ -852,13 +861,13 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
         </Select>
       </MobileMenu>
       <ConnectModal
-        visible={isOpenModal}
+        visible={settings.isOpenConnectModal}
         web3={web3}
         error={error}
         wcUri={wcUri}
         awaiting={awaiting}
         walletType={walletType}
-        onCancel={() => setIsOpenModal(false)}
+        onCancel={() => openModal(false)}
         onConnectMetaMask={handleMetaMask}
         onConnectBinance={handleBinance}
         onBack={() => setWcUri(null)}
