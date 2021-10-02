@@ -44,7 +44,7 @@ function Footer({ settings }) {
       <div className="flex align-center">
         <div className="status-circle" target="_blank" rel="noreferrer" />
         <a
-          href={process.env.REACT_APP_BSC_EXPLORER}
+          href={constants.BSC_EXPLORER_URL}
           target="_blank"
           rel="noreferrer"
         >
@@ -52,7 +52,7 @@ function Footer({ settings }) {
         </a>
       </div>
       <a
-        href={`${process.env.REACT_APP_BSC_EXPLORER}/address/${constants.CONTRACT_XVS_TOKEN_ADDRESS}`}
+        href={`${constants.BSC_EXPLORER_URL}/address/${constants.CONTRACT_XVS_TOKEN_ADDRESS}`}
         target="_blank"
         rel="noreferrer"
       >

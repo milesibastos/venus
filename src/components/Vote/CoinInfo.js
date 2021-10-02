@@ -7,6 +7,7 @@ import { connectAccount } from 'core';
 import commaNumber from 'comma-number';
 import coinImg from 'assets/img/venus_32.png';
 import { Card } from 'components/Basic/Card';
+import { BSC_EXPLORER_URL } from 'utilities/constants';
 
 const CardWrapper = styled.div`
   width: 100%;
@@ -48,10 +49,7 @@ const format = commaNumber.bindWith(',', '.');
 
 function CoinInfo({ address, balance }) {
   const handleLink = () => {
-    window.open(
-      `${process.env.REACT_APP_BSC_EXPLORER}/address/${address}`,
-      '_blank'
-    );
+    window.open(`${BSC_EXPLORER_URL}/address/${address}`, '_blank');
   };
 
   return (

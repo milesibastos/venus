@@ -65,7 +65,7 @@ const format = commaNumber.bindWith(',', '.');
 function VaiInfo({ settings }) {
   const handleLink = () => {
     window.open(
-      `${process.env.REACT_APP_BSC_EXPLORER}/token/${constants.CONTRACT_VAI_TOKEN_ADDRESS}?a=${settings.selectedAddress}`,
+      `${constants.BSC_EXPLORER_URL}/token/${constants.CONTRACT_VAI_TOKEN_ADDRESS}?a=${settings.selectedAddress}`,
       '_blank'
     );
   };

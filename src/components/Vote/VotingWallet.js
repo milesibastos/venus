@@ -13,6 +13,7 @@ import { Card } from 'components/Basic/Card';
 import coinImg from 'assets/img/venus_32.png';
 import { getVenusLensContract } from '../../utilities/ContractService';
 import BigNumber from 'bignumber.js';
+import { BSC_EXPLORER_URL } from 'utilities/constants';
 
 const VotingWalletWrapper = styled.div`
   width: 100%;
@@ -241,7 +242,7 @@ function VotingWallet({
               <div className="flex align-center">
                 <a
                   className="content-value"
-                  href={`${process.env.REACT_APP_BSC_EXPLORER}/address/${delegateAddress}`}
+                  href={`${BSC_EXPLORER_URL}/address/${delegateAddress}`}
                   target="_blank"
                   rel="noreferrer"
                 >

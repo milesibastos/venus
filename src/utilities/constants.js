@@ -103,6 +103,21 @@ export const CONTRACT_VENUS_LENS_ADDRESS =
     ? process.env.REACT_APP_TEST_VENUS_LENS_ADDRESS
     : process.env.REACT_APP_MAIN_VENUS_LENS_ADDRESS;
 
+export const APP_CHAIN_ID =
+  process.env.REACT_APP_CHAIN_ID === 'dev'
+    ? process.env.REACT_APP_TEST_CHAIN_ID
+    : process.env.REACT_APP_MAIN_CHAIN_ID;
+
+export const APP_RPC_URL =
+  process.env.REACT_APP_ENV === 'dev'
+    ? process.env.REACT_APP_TEST_RPC_URL
+    : process.env.REACT_APP_MAIN_RPC_URL;
+
+export const BSC_EXPLORER_URL =
+  process.env.REACT_APP_ENV === 'dev'
+    ? process.env.REACT_APP_TEST_BSC_EXPLORER_URL
+    : process.env.REACT_APP_MAIN_BSC_EXPLORER_URL;
+
 // Contract ABI
 export const CONTRACT_TOKEN_ADDRESS =
   process.env.REACT_APP_ENV === 'dev'

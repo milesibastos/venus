@@ -8,6 +8,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Icon } from 'antd';
 import { Card } from 'components/Basic/Card';
 import toast from 'components/Basic/Toast';
+import { BSC_EXPLORER_URL } from 'utilities/constants';
 
 const ProposerInfoWrapper = styled.div`
   width: 100%;
@@ -38,7 +39,7 @@ const ProposerInfoWrapper = styled.div`
 function ProposerInfo({ address }) {
   const handleLink = () => {
     window.open(
-      `${process.env.REACT_APP_BSC_EXPLORER}/address/${address}`,
+      `${BSC_EXPLORER_URL}/address/${address}`,
       '_blank'
     );
   };

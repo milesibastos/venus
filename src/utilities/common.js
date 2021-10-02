@@ -168,8 +168,8 @@ export const setupNetwork = async () => {
               symbol: 'bnb',
               decimals: 18
             },
-            rpcUrls: nodes,
-            blockExplorerUrls: [`${BASE_BSC_SCAN_URL}/`]
+            rpcUrls: [constants.APP_RPC_URL],
+            blockExplorerUrls: [`${constants.BSC_EXPLORER_URL}/`]
           }
         ]
       });

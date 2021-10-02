@@ -55,12 +55,11 @@ const CardWrapper = styled.div`
 `;
 
 const format = commaNumber.bindWith(',', '.');
-const abortController = new AbortController();
 
 function CoinInfo({ settings }) {
   const handleLink = () => {
     window.open(
-      `${process.env.REACT_APP_BSC_EXPLORER}/token/${constants.CONTRACT_TOKEN_ADDRESS.xvs.address}?a=${settings.selectedAddress}`,
+      `${constants.BSC_EXPLORER_URL}/token/${constants.CONTRACT_TOKEN_ADDRESS.xvs.address}?a=${settings.selectedAddress}`,
       '_blank'
     );
   };

@@ -305,7 +305,7 @@ function XVS({ settings }) {
                   <img src={coinImg} alt="xvs" />
                   <a
                     className="highlight"
-                    href={`${process.env.REACT_APP_BSC_EXPLORER}/token/${constants.CONTRACT_XVS_TOKEN_ADDRESS}`}
+                    href={`${constants.BSC_EXPLORER_URL}/token/${constants.CONTRACT_XVS_TOKEN_ADDRESS}`}
                     target="_blank"
                     rel="noreferrer"
                   >

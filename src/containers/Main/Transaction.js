@@ -1,21 +1,20 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import BigNumber from 'bignumber.js';
 import { compose } from 'recompose';
 import commaNumber from 'comma-number';
-import { Row, Col, Pagination } from 'antd';
+import { Row, Col, Pagination, Select } from 'antd';
 import styled from 'styled-components';
 import { bindActionCreators } from 'redux';
 import { connectAccount, accountActionCreators } from 'core';
 import MainLayout from 'containers/Layout/MainLayout';
 import { Label } from 'components/Basic/Label';
-import { Select } from 'antd';
 import { promisify } from 'utilities';
-import coinImg from 'assets/img/coins/vai.svg';
 import moment from 'moment';
 import arrowRightImg from 'assets/img/arrow-right.png';
 import xvsImg from 'assets/img/coins/xvs.png';
+import { BSC_EXPLORER_URL } from 'utilities/constants';
+
 
 const TransactionWrapper = styled.div`
   width: 100%;
@@ -398,7 +397,7 @@ function Transaction({ getTransactionHistory, settings }) {
                       className="item-title"
                       onClick={() => {
                         window.open(
-                          `${process.env.REACT_APP_BSC_EXPLORER}/tx/${item.transactionHash}`,
+                          `${BSC_EXPLORER_URL}/tx/${item.transactionHash}`,
                           '_blank'
                         );
                       }}
@@ -417,7 +416,7 @@ function Transaction({ getTransactionHistory, settings }) {
                       className="item-title"
                       onClick={() => {
                         window.open(
-                          `${process.env.REACT_APP_BSC_EXPLORER}/address/${item.from}`,
+                          `${BSC_EXPLORER_URL}/address/${item.from}`,
                           '_blank'
                         );
                       }}
@@ -431,7 +430,7 @@ function Transaction({ getTransactionHistory, settings }) {
                       className="mobile-label"
                       onClick={() => {
                         window.open(
-                          `${process.env.REACT_APP_BSC_EXPLORER}/address/${item.to}`,
+                          `${BSC_EXPLORER_URL}/address/${item.to}`,
                           '_blank'
                         );
                       }}
@@ -442,7 +441,7 @@ function Transaction({ getTransactionHistory, settings }) {
                       className="item-title"
                       onClick={() => {
                         window.open(
-                          `${process.env.REACT_APP_BSC_EXPLORER}/address/${item.to}`,
+                          `${BSC_EXPLORER_URL}/address/${item.to}`,
                           '_blank'
                         );
                       }}
