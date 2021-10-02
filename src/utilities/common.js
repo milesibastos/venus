@@ -29,7 +29,7 @@ export const getArgs = func => {
     });
 };
 
-export const checkIsValidNetwork = (walletType) => {
+export const checkIsValidNetwork = walletType => {
   if (window.ethereum || window.BinanceChain) {
     let netId;
     if (walletType === 'binance' && window.BinanceChain) {
@@ -150,4 +150,38 @@ export const currencyFormatter = labelValue => {
   //       new BigNumber(`${Math.abs(Number(labelValue)) / 1.0e3}`).dp(2, 1)
   //     )}K`
   //   : `$${format(new BigNumber(`${Math.abs(Number(labelValue))}`).dp(2, 1))}`;
+};
+
+export const setupNetwork = async () => {
+  const provider = window.ethereum;
+  if (provider) {
+    const chainId = parseInt(process.env.REACT_APP_CHAIN_ID, 10);
+    try {
+      await provider.request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: `0x${chainId.toString(16)}`,
+            chainName: 'Binance Smart Chain Mainnet',
+            nativeCurrency: {
+              name: 'BNB',
+              symbol: 'bnb',
+              decimals: 18
+            },
+            rpcUrls: nodes,
+            blockExplorerUrls: [`${BASE_BSC_SCAN_URL}/`]
+          }
+        ]
+      });
+      return true;
+    } catch (error) {
+      console.error('Failed to setup the network in Metamask:', error);
+      return false;
+    }
+  } else {
+    console.error(
+      "Can't setup the BSC network on metamask because window.ethereum is undefined"
+    );
+    return false;
+  }
 };
