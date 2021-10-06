@@ -2,6 +2,7 @@ import Web3 from 'web3';
 import * as constants from './constants';
 
 // singleton instance
+// todo: we need to provide a instance without login
 let web3Instance = null;
 export const getWeb3 = () => {
   if (!web3Instance) {

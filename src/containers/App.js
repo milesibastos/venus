@@ -1,6 +1,6 @@
 import { hot } from 'react-hot-loader/root';
 import React from 'react';
-import { Provider } from 'react-redux';
+import { Provider as ReduxProvider } from 'react-redux';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 import { IntlProvider, addLocaleData } from 'react-intl';
 import { toast, ToastContainer, Slide } from 'react-toastify';
@@ -19,7 +19,9 @@ import VoteOverview from 'containers/Main/VoteOverview';
 import ProposerDetail from 'containers/Main/ProposerDetail';
 import VoterLeaderboard from 'containers/Main/VoterLeaderboard';
 import Transaction from 'containers/Main/Transaction';
+import { RefreshContextProvider } from 'utilities/providers/RefreshProvider';
 import Theme from './Theme';
+// providers
 
 import 'assets/styles/App.scss';
 
@@ -44,50 +46,52 @@ class App extends React.Component {
     return (
       <Theme>
         <IntlProvider locale={lang} messages={message}>
-          <Provider store={store}>
-            <BrowserRouter>
-              <ToastContainer
-                autoClose={8000}
-                transition={Slide}
-                hideProgressBar
-                newestOnTop
-                position={toast.POSITION.TOP_LEFT}
-              />
-              <Switch
-                atEnter={{ opacity: 0 }}
-                atLeave={{ opacity: 0.5 }}
-                atActive={{ opacity: 1 }}
-                className="switch-wrapper"
-              >
-                <Route exact path="/dashboard" component={Dashboard} />
-                <Route exact path="/vote" component={Vote} />
-                <Route exact path="/xvs" component={XVS} />
-                <Route exact path="/market" component={Market} />
-                <Route exact path="/transaction" component={Transaction} />
-                <Route exact path="/vault" component={Vault} />
-                <Route exact path="/market/:asset" component={MarketDetail} />
-                <Route
-                  exact
-                  path="/vote/leaderboard"
-                  component={VoterLeaderboard}
+          <ReduxProvider store={store}>
+            <RefreshContextProvider>
+              <BrowserRouter>
+                <ToastContainer
+                  autoClose={8000}
+                  transition={Slide}
+                  hideProgressBar
+                  newestOnTop
+                  position={toast.POSITION.TOP_LEFT}
                 />
-                <Route
-                  exact
-                  path="/vote/proposal/:id"
-                  component={VoteOverview}
-                />
-                <Route
-                  exact
-                  path="/vote/address/:address"
-                  component={ProposerDetail}
-                />
-                {process.env.REACT_APP_ENV === 'dev' && (
-                  <Route exact path="/faucet" component={Faucet} />
-                )}
-                <Redirect from="/" to="/dashboard" />
-              </Switch>
-            </BrowserRouter>
-          </Provider>
+                <Switch
+                  atEnter={{ opacity: 0 }}
+                  atLeave={{ opacity: 0.5 }}
+                  atActive={{ opacity: 1 }}
+                  className="switch-wrapper"
+                >
+                  <Route exact path="/dashboard" component={Dashboard} />
+                  <Route exact path="/vote" component={Vote} />
+                  <Route exact path="/xvs" component={XVS} />
+                  <Route exact path="/market" component={Market} />
+                  <Route exact path="/transaction" component={Transaction} />
+                  <Route exact path="/vault" component={Vault} />
+                  <Route exact path="/market/:asset" component={MarketDetail} />
+                  <Route
+                    exact
+                    path="/vote/leaderboard"
+                    component={VoterLeaderboard}
+                  />
+                  <Route
+                    exact
+                    path="/vote/proposal/:id"
+                    component={VoteOverview}
+                  />
+                  <Route
+                    exact
+                    path="/vote/address/:address"
+                    component={ProposerDetail}
+                  />
+                  {process.env.REACT_APP_ENV === 'dev' && (
+                    <Route exact path="/faucet" component={Faucet} />
+                  )}
+                  <Redirect from="/" to="/dashboard" />
+                </Switch>
+              </BrowserRouter>
+            </RefreshContextProvider>
+          </ReduxProvider>
         </IntlProvider>
       </Theme>
     );

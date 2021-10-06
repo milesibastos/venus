@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import useConnect, { getLocalConnectId, ConnectorNames } from './useConnect';
+import useConnect from 'utilities/hooks/useConnect';
+import { getLocalConnectId, connectorNameMap } from 'utilities/connector';
 
 const binanceChainListener = async () =>
   new Promise(resolve =>
@@ -21,8 +22,9 @@ const useEagerConnect = () => {
   useEffect(() => {
     const connectorId = getLocalConnectId();
 
+    // if connected last time, we will auto-connect for users, if not, don't do anything
     if (connectorId) {
-      const isConnectorBinanceChain = connectorId === ConnectorNames.BSC;
+      const isConnectorBinanceChain = connectorId === connectorNameMap.BSC;
       const isBinanceChainDefined = Reflect.has(window, 'BinanceChain');
 
       // Currently BSC extension doesn't always inject in time.

@@ -46,15 +46,18 @@ import vtusd from 'assets/img/coins/vtusd.png';
 
 import contracts from './contracts';
 
-export const NOT_INSTALLED = 'MetaMask not installed';
-export const MISSING_PROVIDER = 'Missing provider';
-export const LOCKED = 'MetaMask is locked';
-export const TIMEOUT = 'Timeout';
-// Wallet Connect Errors
-export const FAILED_TO_GET_WC_URI = 'Failed to get wallet connect uri';
-export const FAILED_TO_INIT_WC = 'Failed to initialize wallet connect';
-export const NOT_EXIST_WC = 'Wallet Connect doesn`t exist';
-export const INVALID_ADDRESS = 'Wallet address is not valid';
+export const CONNECTOR_ERROR_MAP = {
+  // Wallet Connect Errors
+  FAILED_TO_GET_WC_URI: 0,
+  FAILED_TO_INIT_WC: 1,
+  NOT_EXIST_WC: 2,
+  INVALID_ADDRESS: 3,
+  // universal error
+  MISSING_PROVIDER: 4, // missing provider & not installed is the same error
+  USER_REJECTED: 5,
+  UNSUPPORTED_CHAIN: 6,
+  UNKNOWN: 7
+};
 
 export const CONTRACT_XVS_TOKEN_ADDRESS =
   process.env.REACT_APP_ENV === 'dev'

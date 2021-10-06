@@ -106,18 +106,7 @@ const ModalContent = styled.div`
   }
 `;
 
-function ConnectModal({
-  visible,
-  web3,
-  wcUri,
-  error,
-  awaiting,
-  walletType,
-  onCancel,
-  onConnectMetaMask,
-  onConnectBinance,
-  onBack
-}) {
+function ConnectModal({ visible, onCancel }) {
   const MetaMaskStatus = () => {
     if (error && error.message === constants.NOT_INSTALLED) {
       return (
@@ -250,24 +239,11 @@ function ConnectModal({
 
 ConnectModal.propTypes = {
   visible: PropTypes.bool,
-  web3: PropTypes.object,
-  error: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  awaiting: PropTypes.bool,
-  walletType: PropTypes.string,
-  wcUri: PropTypes.string,
-  onCancel: PropTypes.func,
-  onConnectMetaMask: PropTypes.func.isRequired,
-  onConnectBinance: PropTypes.func.isRequired,
-  onBack: PropTypes.func.isRequired
+  onCancel: PropTypes.func
 };
 
 ConnectModal.defaultProps = {
   visible: false,
-  web3: {},
-  error: '',
-  wcUri: null,
-  awaiting: false,
-  walletType: '',
   onCancel: () => {}
 };
 
