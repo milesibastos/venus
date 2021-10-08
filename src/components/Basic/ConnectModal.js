@@ -1,16 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { Modal } from 'antd';
-import QRCode from 'qrcode.react';
 import * as constants from 'utilities/constants';
 import metamaskImg from 'assets/img/metamask.png';
-import coinbaseImg from 'assets/img/coinbase.png';
 import ledgerImg from 'assets/img/ledger.png';
-import binanceImg from 'assets/img/binance.jpg';
 import arrowRightImg from 'assets/img/arrow-right.png';
 import closeImg from 'assets/img/close.png';
 import logoImg from 'assets/img/logo.png';
+import { useWeb3React } from '@web3-react/core';
+import { useConnect } from 'utilities/hooks/useConnect';
+// @todo: recompose style component should be removed in the future
+import { bindActionCreators } from 'redux';
+import { connectAccount, accountActionCreators } from 'core';
+import { compose } from 'recompose';
+
+import {
+  connectorNameMap,
+  ConnectorNames,
+  convertError
+} from 'utilities/connector';
 
 const ModalContent = styled.div`
   border-radius: 20px;
@@ -106,34 +115,74 @@ const ModalContent = styled.div`
   }
 `;
 
-function ConnectModal({ visible, onCancel }) {
-  const MetaMaskStatus = () => {
-    if (error && error.message === constants.NOT_INSTALLED) {
-      return (
-        <p className="center">
-          We could not locate a supported web3 browser extension. We recommend
-          using MetaMask.
-          <a
-            href="https://metamask.io/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Download MetaMask here.
-          </a>
-        </p>
-      );
+// close modal when address change/history change
+function ConnectModal({ visible, onCancel, setSetting }) {
+  const { connect } = useConnect();
+
+  const [currentConnector, setCurrentConnector] = useState(undefined);
+  const [activatingConnector, setActivatingConnector] = useState(undefined);
+  const { error, account, connector, chainId } = useWeb3React();
+
+  useEffect(() => {
+    // @todo: walletType should be deprecated, we should use chainId instead
+    const walletType = '';
+    setCurrentConnector(connector);
+    if (activatingConnector && activatingConnector === connector) {
+      setActivatingConnector(undefined);
     }
-    if (error) {
-      return <span>{error.message}</span>;
+    setSetting({
+      selectedAddress: account,
+      walletType,
+      waiting: false
+    });
+  }, [connector, account, error, chainId]);
+
+  const getStatusComponent = () => {
+    // connector is switching
+    const isConnecting = currentConnector !== activatingConnector;
+    if (isConnecting) {
+      return <span>Connecting to account...</span>;
     }
-    if (!web3 && awaiting) {
-      return <span>MetaMask loading...</span>;
+    const errorCode = convertError(error);
+    const { CONNECTOR_ERROR_MAP } = constants;
+    switch (errorCode) {
+      case CONNECTOR_ERROR_MAP.MISSING_PROVIDER: {
+        return (
+          <p className="center">
+            We could not locate a supported web3 browser extension. We recommend
+            using MetaMask.
+            <a
+              href="https://metamask.io/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Download MetaMask here.
+            </a>
+          </p>
+        );
+      }
+      case CONNECTOR_ERROR_MAP.USER_REJECTED: {
+        return (
+          <span>Please authorize this website to access your account.</span>
+        );
+      }
+      case CONNECTOR_ERROR_MAP.UNSUPPORTED_CHAIN: {
+        return <span>You are connected to an unsupported chain.</span>;
+      }
+      default: {
+        return null;
+      }
     }
-    if (!web3) {
-      return <span>Please open and allow MetaMask</span>;
-    }
-    return null;
   };
+
+  function handleConnectWallet(connectorName) {
+    const connectorByName = connectorNameMap[connectorName];
+    if (!connectorByName) {
+      throw new Error(`unsupported connector`);
+    }
+    setActivatingConnector(connectorNameMap[ConnectorNames.INJECTED]);
+    connect(connectorName);
+  }
 
   return (
     <Modal
@@ -154,77 +203,37 @@ function ConnectModal({ visible, onCancel }) {
           onClick={onCancel}
         />
         <div className="flex flex-column align-center just-center header-content">
-          {wcUri && (
-            <div
-              className="flex align-center back-btn pointer"
-              onClick={onBack}
-            >
-              <img src={arrowRightImg} alt="arrow" />
-              <span>Back</span>
-            </div>
-          )}
           <img src={logoImg} alt="logo" className="logo-image" />
           <p className="title">Connect to start using Venus</p>
         </div>
         <div className="connect-wallet-content">
-          {!wcUri && (
-            <>
-              <div
-                className={`flex align-center just-between wallet-connect-btn ${
-                  process.env.REACT_APP_ENV === 'dev' ? 'disabled' : ''
-                }`}
-                // onClick={() => {
-                //   if (process.env.REACT_APP_ENV === 'prod') {
-                //     onConnectWallet();
-                //   }
-                // }}
-              >
-                <div className="flex align-center">
-                  <img src={coinbaseImg} alt="coinbase wallet" />
-                  <span>Wallet Connect</span>
-                </div>
-                <span>Coming Soon</span>
-              </div>
-              <div className="flex align-center just-between ledger-connect-btn">
-                <div className="flex align-center">
-                  <img src={ledgerImg} alt="ledger" />
-                  <span>Ledger</span>
-                </div>
-                <span>Coming Soon</span>
-                {/* <img src={arrowRightImg} alt="arrow" /> */}
-              </div>
-              <div
-                className="flex align-center just-between metamask-connect-btn"
-                onClick={onConnectMetaMask}
-              >
-                <div className="flex align-center">
-                  <img src={metamaskImg} alt="metamask" />
-                  <span>MetaMask</span>
-                </div>
-                <img src={arrowRightImg} alt="arrow" />
-              </div>
-              <div
-                className="flex align-center just-between metamask-connect-btn"
-                onClick={onConnectBinance}
-              >
-                <div className="flex align-center">
-                  <img src={binanceImg} alt="binance" />
-                  <span>Binance smart chain</span>
-                </div>
-                <img src={arrowRightImg} alt="arrow" />
-              </div>
-              {(error || !web3) && walletType && walletType === 'metamask' && (
-                <div className="metamask-status">
-                  <MetaMaskStatus />
-                </div>
-              )}
-            </>
-          )}
-          {wcUri && (
-            <div className="flex align-center just-center">
-              <QRCode value={wcUri} size={256} />
+          {/* ledger not supported */}
+          <div className="flex align-center just-between ledger-connect-btn">
+            <div className="flex align-center">
+              <img src={ledgerImg} alt="ledger" />
+              <span>Ledger</span>
             </div>
-          )}
+            <span>Coming Soon</span>
+          </div>
+          {[
+            ConnectorNames.INJECTED,
+            ConnectorNames.BSC,
+            ConnectorNames.WALLETCONNECT
+          ].map(connectorName => {
+            return (
+              <div
+                className="flex align-center just-between metamask-connect-btn"
+                onClick={() => handleConnectWallet(connectorName)}
+              >
+                <div className="flex align-center" key={connectorName}>
+                  <img src={metamaskImg} alt="metamask" />
+                  <span>{connectorName}</span>
+                </div>
+                <img src={arrowRightImg} alt="arrow" />
+              </div>
+            );
+          })}
+          {getStatusComponent()}
         </div>
         <p className="center terms-of-use">
           <span>By connecting, I accept Venus&lsquo;s</span>
@@ -239,7 +248,8 @@ function ConnectModal({ visible, onCancel }) {
 
 ConnectModal.propTypes = {
   visible: PropTypes.bool,
-  onCancel: PropTypes.func
+  onCancel: PropTypes.func,
+  setSetting: PropTypes.func.isRequired
 };
 
 ConnectModal.defaultProps = {
@@ -247,4 +257,21 @@ ConnectModal.defaultProps = {
   onCancel: () => {}
 };
 
-export default ConnectModal;
+const mapStateToProps = ({ account }) => ({
+  settings: account.setting
+});
+
+const mapDispatchToProps = dispatch => {
+  const { setSetting } = accountActionCreators;
+
+  return bindActionCreators(
+    {
+      setSetting
+    },
+    dispatch
+  );
+};
+
+export default compose(connectAccount(mapStateToProps, mapDispatchToProps))(
+  ConnectModal
+);

@@ -22,7 +22,9 @@ const account = {
     },
     vaultVaiStaked: null,
     withXVS: true,
-    markets: []
+    markets: [],
+    // we need chainid to identify if we are at the correct network
+    chainId: 0
   }
 };
 export const initialState = {

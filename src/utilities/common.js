@@ -158,3 +158,7 @@ export const setupNetwork = async () => {
     return false;
   }
 };
+
+export const checkIsValidNetwork = (chainId) => {
+  
+}

@@ -30,9 +30,9 @@ export const setLocalConnectId = connectId => {
 const POLLING_INTERVAL = 12000;
 
 export const ConnectorNames = {
-  BSC: 'bsc',
-  INJECTED: 'injected',
-  WALLETCONNECT: 'wallectconnect'
+  BSC: 'Binance smart chain',
+  INJECTED: 'MetaMask',
+  WALLETCONNECT: 'Wallect Connect'
 };
 
 export const connectorNameMap = {

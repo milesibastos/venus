@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import { compose } from 'recompose';
 import { NavLink, withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
@@ -22,271 +21,24 @@ import { connectAccount, accountActionCreators } from 'core';
 import logoImg from 'assets/img/logo.png';
 import commaNumber from 'comma-number';
 import { getBigNumber } from 'utilities/common';
-import toast from 'components/Basic/Toast';
 import XVSIcon from 'assets/img/venus.svg';
 import XVSActiveIcon from 'assets/img/venus_active.svg';
-
-const SidebarWrapper = styled.div`
-  height: 100vh;
-  min-width: 108px;
-  border-radius: 25px;
-  background-color: var(--color-bg-primary);
-  display: flex;
-  flex-direction: column;
-  margin-right: 30px;
-
-  @media only screen and (max-width: 768px) {
-    display: flex;
-    height: 60px;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin-right: 0px;
-  }
-`;
-
-const Logo = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-top: 54px;
-  i {
-    font-size: 18px;
-  }
-
-  @media only screen and (max-width: 768px) {
-    padding: 0 20px;
-    img {
-      width: 60px;
-    }
-  }
-
-  @media only screen and (max-width: 1280px) {
-    i {
-      font-size: 12px !important;
-    }
-    img {
-      width: 80px !important;
-    }
-  }
-`;
-
-const MainMenu = styled.div`
-  margin-top: 100px;
-
-  @media only screen and (max-width: 768px) {
-    margin: 0 20px;
-  }
-
-  .xvs-active-icon {
-    display: none;
-  }
-
-  a {
-    padding: 7px;
-    i,
-    img {
-      width: 20%;
-      margin: 0 10%;
-      svg {
-        fill: var(--color-text-main);
-      }
-    }
-    .transaction {
-      width: 14%;
-      margin: 0 4% 0 12%;
-    }
-    img {
-      width: 10%;
-      margin: 0 13%;
-    }
-    span {
-      width: 80%;
-    }
-    @media only screen and (max-width: 1440px) {
-      span {
-        font-size: 14px;
-      }
-    }
-
-    @media only screen and (max-width: 1280px) {
-      span {
-        font-size: 12px;
-      }
-    }
-    &:not(:last-child) {
-      margin-bottom: 15px;
-    }
-
-    &:hover {
-      svg {
-        fill: var(--color-yellow);
-      }
-      path {
-        fill: var(--color-yellow);
-      }
-      span {
-        color: var(--color-yellow);
-      }
-      .xvs-icon {
-        display: none;
-      }
-      .xvs-active-icon {
-        display: block;
-      }
-    }
-  }
-
-  .active {
-    background-color: var(--color-bg-active);
-    svg {
-      fill: var(--color-yellow);
-    }
-    span {
-      color: var(--color-yellow);
-    }
-    path {
-      fill: var(--color-yellow);
-    }
-    .xvs-icon {
-      display: none;
-    }
-    .xvs-active-icon {
-      display: block;
-    }
-  }
-
-  @media only screen and (max-width: 768px) {
-    display: none;
-  }
-`;
-
-const FaucetMenu = styled.div`
-  width: 100%;
-  margin-top: auto;
-  margin-bottom: 20px;
-  a {
-    padding: 7px 0px;
-    svg {
-      fill: var(--color-text-main);
-      margin-left: 34px;
-      margin-right: 26px;
-    }
-    &:not(:last-child) {
-      margin-bottom: 48px;
-    }
-
-    &:hover {
-      svg {
-        fill: var(--color-yellow);
-      }
-      span {
-        color: var(--color-yellow);
-      }
-    }
-
-    @media only screen and (max-width: 1440px) {
-      span {
-        font-size: 14px;
-      }
-    }
-
-    @media only screen and (max-width: 1280px) {
-      span {
-        font-size: 12px;
-      }
-    }
-  }
-  .active {
-    background-color: var(--color-bg-active);
-    svg {
-      fill: var(--color-yellow);
-    }
-    span {
-      color: var(--color-yellow);
-    }
-  }
-
-  @media only screen and (max-width: 768px) {
-    display: none;
-  }
-`;
-
-const TotalValue = styled.div`
-  width: 100%;
-  margin-bottom: 20px;
-
-  > div {
-    span:first-child {
-      word-break: break-all;
-      text-align: center;
-    }
-  }
-
-  @media only screen and (max-width: 768px) {
-    display: none;
-  }
-`;
-
-const MobileMenu = styled.div`
-  display: none;
-
-  @media only screen and (max-width: 768px) {
-    display: block;
-    position: relative;
-    .ant-select {
-      .ant-select-selection {
-        background-color: transparent;
-        border: none;
-        color: var(--color-text-main);
-        font-size: 17px;
-        font-weight: 900;
-        color: var(--color-text-main);
-        margin-top: 4px;
-        i {
-          color: var(--color-text-main);
-        }
-      }
-    }
-  }
-`;
-
-const ConnectButton = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-
-  @media only screen and (max-width: 768px) {
-    margin: 0;
-  }
-
-  .connect-btn {
-    width: 114px;
-    height: 30px;
-    border-radius: 5px;
-    background-image: linear-gradient(to right, #f2c265, #f7b44f);
-
-    @media only screen and (max-width: 768px) {
-      width: 100px;
-    }
-
-    .MuiButton-label {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--color-text-main);
-      text-transform: capitalize;
-
-      @media only screen and (max-width: 768px) {
-        font-size: 12px;
-      }
-    }
-  }
-`;
+import {
+  LogoWrapper,
+  SidebarWrapper,
+  MainMenuWrapper,
+  TotalValueWrapper,
+  FaucetMenuWrapper,
+  ConnectButtonWrapper,
+  MobileMenuWrapper
+} from 'containers/Layout/SidebarStyled';
+import { useRefresh } from 'utilities/hooks/useRefresh';
 
 const { Option } = Select;
 
 const format = commaNumber.bindWith(',', '.');
 
+// settings.latestBlockNumber
 function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [totalVaiMinted, setTotalVaiMinted] = useState('0');
@@ -294,16 +46,8 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
 
   const defaultPath = history.location.pathname.split('/')[1];
 
-  // settings.selectedAddress
-  // settings.walletType
-  // waiting
-  // web3
-  // error, will be sent to ConnectModal and show the error
-  // settings.latestBlockNumber
-  // close modal when address change/history change
-  // updateMarketInfo when got market data from backend
+  const [fast, slow] = useRefresh();
 
-  // todo: we need this if-else?
   const setDecimals = async () => {
     const decimals = {};
     Object.values(constants.CONTRACT_TOKEN_ADDRESS).forEach(async item => {
@@ -331,7 +75,8 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
     setSetting({ decimals });
   };
 
-  const initSettings = async () => {
+  useEffect(async () => {
+    console.log('====== init settings');
     await setDecimals();
     // todo: do we need this pendingInfo set to null
     setSetting({
@@ -342,7 +87,7 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
         symbol: ''
       }
     });
-  };
+  }, []);
 
   const updateStakingInfoByMarketData = async () => {
     const appContract = getComptrollerContract();
@@ -394,8 +139,8 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
     setTVL(totalLiquidity);
   };
 
-  const requestMarketData = async () => {
-    // request market data from backend
+  // periodically request backend data
+  useEffect(async () => {
     const res = await promisify(getGovernanceVenus, {});
     if (!res.status) {
       return;
@@ -415,18 +160,16 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
       markets,
       dailyVenus: res.data.dailyVenus
     });
-  };
-
-  // call requestMarketData() every 5s
+  }, [fast]);
 
   return (
     <SidebarWrapper>
-      <Logo>
+      <LogoWrapper>
         <NavLink to="/" activeClassName="active">
           <img src={logoImg} alt="logo" className="logo-text" />
         </NavLink>
-      </Logo>
-      <MainMenu>
+      </LogoWrapper>
+      <MainMenuWrapper>
         <NavLink
           className="flex flex-start align-center"
           to="/dashboard"
@@ -493,8 +236,8 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
             <Label primary>History</Label>
           </div>
         </NavLink>
-      </MainMenu>
-      <FaucetMenu>
+      </MainMenuWrapper>
+      <FaucetMenuWrapper>
         {process.env.REACT_APP_ENV === 'dev' && (
           <NavLink
             className="flex just-center"
@@ -504,19 +247,19 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
             <Label primary>Faucet</Label>
           </NavLink>
         )}
-      </FaucetMenu>
+      </FaucetMenuWrapper>
       {settings.selectedAddress && (
-        <TotalValue>
+        <TotalValueWrapper>
           <div className="flex flex-column align-center just-center">
             <Label primary>
               ${format(new BigNumber(tvl).dp(2, 1).toString(10))}
             </Label>
             <Label className="center">Total Value Locked</Label>
           </div>
-        </TotalValue>
+        </TotalValueWrapper>
       )}
       {settings.selectedAddress && (
-        <TotalValue>
+        <TotalValueWrapper>
           <div className="flex flex-column align-center just-center">
             <Label primary>
               {format(
@@ -527,9 +270,9 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
             </Label>
             <Label className="center">Total VAI Minted</Label>
           </div>
-        </TotalValue>
+        </TotalValueWrapper>
       )}
-      <ConnectButton>
+      <ConnectButtonWrapper>
         <Button
           className="connect-btn"
           onClick={() => {
@@ -546,8 +289,8 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
                 4
               )}`}
         </Button>
-      </ConnectButton>
-      <MobileMenu id="main-menu">
+      </ConnectButtonWrapper>
+      <MobileMenuWrapper id="main-menu">
         <Select
           defaultValue={defaultPath}
           style={{ width: 120, marginRight: 10 }}
@@ -596,7 +339,7 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
             </Option>
           )}
         </Select>
-      </MobileMenu>
+      </MobileMenuWrapper>
       <ConnectModal
         visible={isOpenModal}
         onCancel={() => setIsOpenModal(false)}
