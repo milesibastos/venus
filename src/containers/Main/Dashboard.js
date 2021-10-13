@@ -261,7 +261,6 @@ function Dashboard({ settings, setSetting }) {
         mintableVai
       });
     } catch (error) {
-      console.log(error);
       setMarketInfoUpdating(false);
     }
   };

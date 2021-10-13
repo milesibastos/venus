@@ -129,16 +129,8 @@ function ConnectModal({ visible, onCancel, onConnected, setSetting }) {
   const [activatingConnector, setActivatingConnector] = useState(undefined);
   const { error, account, connector, chainId, library } = useWeb3React();
 
-  useInactiveListener({
-    handleChainChanged: (chainId) => {
-      console.log('==== currentConnector,', currentConnector)
-    }
-  });
-
   useEffect(() => {
     setCurrentConnector(connector);
-    console.log('===== update connectmodal', activatingConnector, connector, error, account);
-
     if (activatingConnector && activatingConnector === connector) {
       setActivatingConnector(undefined);
     }
