@@ -3,13 +3,18 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { Modal } from 'antd';
 import * as constants from 'utilities/constants';
+import { useWeb3React } from '@web3-react/core';
+import { useConnect } from 'utilities/hooks/useConnect';
+import { useInactiveListener } from 'utilities/hooks/useInactiveListener';
+
 import metamaskImg from 'assets/img/metamask.png';
 import ledgerImg from 'assets/img/ledger.png';
 import arrowRightImg from 'assets/img/arrow-right.png';
 import closeImg from 'assets/img/close.png';
 import logoImg from 'assets/img/logo.png';
-import { useWeb3React } from '@web3-react/core';
-import { useConnect } from 'utilities/hooks/useConnect';
+import coinbaseImg from 'assets/img/coinbase.png';
+import binanceImg from 'assets/img/binance.jpg';
+
 // @todo: recompose style component should be removed in the future
 import { bindActionCreators } from 'redux';
 import { connectAccount, accountActionCreators } from 'core';
@@ -18,7 +23,8 @@ import { compose } from 'recompose';
 import {
   connectorNameMap,
   ConnectorNames,
-  convertError
+  convertError,
+  getConnectorNameByConnector
 } from 'utilities/connector';
 
 const ModalContent = styled.div`
@@ -116,31 +122,40 @@ const ModalContent = styled.div`
 `;
 
 // close modal when address change/history change
-function ConnectModal({ visible, onCancel, setSetting }) {
+function ConnectModal({ visible, onCancel, onConnected, setSetting }) {
   const { connect } = useConnect();
 
   const [currentConnector, setCurrentConnector] = useState(undefined);
   const [activatingConnector, setActivatingConnector] = useState(undefined);
-  const { error, account, connector, chainId } = useWeb3React();
+  const { error, account, connector, chainId, library } = useWeb3React();
+
+  useInactiveListener({
+    handleChainChanged: (chainId) => {
+      console.log('chain changed');
+      if (currentConnector) {
+        connect(getConnectorNameByConnector(currentConnector));
+      }
+    }
+  });
 
   useEffect(() => {
-    // @todo: walletType should be deprecated, we should use chainId instead
-    const walletType = '';
     setCurrentConnector(connector);
     if (activatingConnector && activatingConnector === connector) {
       setActivatingConnector(undefined);
     }
     setSetting({
       selectedAddress: account,
-      walletType,
+      walletType: getConnectorNameByConnector(connector),
       waiting: false
     });
-  }, [connector, account, error, chainId]);
+    if (!error) {
+      onConnected();
+    }
+  }, [connector, account, error, chainId, library]);
 
   const getStatusComponent = () => {
     // connector is switching
-    const isConnecting = currentConnector !== activatingConnector;
-    if (isConnecting) {
+    if (activatingConnector && !error) {
       return <span>Connecting to account...</span>;
     }
     const errorCode = convertError(error);
@@ -180,7 +195,7 @@ function ConnectModal({ visible, onCancel, setSetting }) {
     if (!connectorByName) {
       throw new Error(`unsupported connector`);
     }
-    setActivatingConnector(connectorNameMap[ConnectorNames.INJECTED]);
+    setActivatingConnector(connectorByName);
     connect(connectorName);
   }
 
@@ -219,21 +234,25 @@ function ConnectModal({ visible, onCancel, setSetting }) {
             ConnectorNames.INJECTED,
             ConnectorNames.BSC,
             ConnectorNames.WALLETCONNECT
-          ].map(connectorName => {
+          ].map((connectorName, i) => {
             return (
               <div
                 className="flex align-center just-between metamask-connect-btn"
                 onClick={() => handleConnectWallet(connectorName)}
+                key={connectorName}
               >
-                <div className="flex align-center" key={connectorName}>
-                  <img src={metamaskImg} alt="metamask" />
+                <div className="flex align-center">
+                  <img
+                    src={[metamaskImg, binanceImg, coinbaseImg][i]}
+                    alt="metamask"
+                  />
                   <span>{connectorName}</span>
                 </div>
                 <img src={arrowRightImg} alt="arrow" />
               </div>
             );
           })}
-          {getStatusComponent()}
+          <div className="metamask-status">{getStatusComponent()}</div>
         </div>
         <p className="center terms-of-use">
           <span>By connecting, I accept Venus&lsquo;s</span>
@@ -249,12 +268,14 @@ function ConnectModal({ visible, onCancel, setSetting }) {
 ConnectModal.propTypes = {
   visible: PropTypes.bool,
   onCancel: PropTypes.func,
+  onConnected: PropTypes.func,
   setSetting: PropTypes.func.isRequired
 };
 
 ConnectModal.defaultProps = {
   visible: false,
-  onCancel: () => {}
+  onCancel: () => {},
+  onConnected: () => {}
 };
 
 const mapStateToProps = ({ account }) => ({

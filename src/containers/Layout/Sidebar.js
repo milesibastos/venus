@@ -46,7 +46,8 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
 
   const defaultPath = history.location.pathname.split('/')[1];
 
-  const [fast, slow] = useRefresh();
+  // eslint-disable-next-line no-unused-vars
+  const { fastRefresh: fast, slowRefresh: slow } = useRefresh();
 
   const setDecimals = async () => {
     const decimals = {};
@@ -75,18 +76,20 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
     setSetting({ decimals });
   };
 
-  useEffect(async () => {
-    console.log('====== init settings');
-    await setDecimals();
-    // todo: do we need this pendingInfo set to null
-    setSetting({
-      pendingInfo: {
-        type: '',
-        status: false,
-        amount: 0,
-        symbol: ''
-      }
-    });
+  useEffect(() => {
+    async function initSettings() {
+      await setDecimals();
+      // todo: do we need this pendingInfo set to null
+      setSetting({
+        pendingInfo: {
+          type: '',
+          status: false,
+          amount: 0,
+          symbol: ''
+        }
+      });
+    }
+    initSettings();
   }, []);
 
   const updateStakingInfoByMarketData = async () => {
@@ -140,27 +143,31 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
   };
 
   // periodically request backend data
-  useEffect(async () => {
-    const res = await promisify(getGovernanceVenus, {});
-    if (!res.status) {
-      return;
-    }
-
-    const markets = Object.keys(constants.CONTRACT_VBEP_ADDRESS)
-      .map(item =>
-        res.data.markets.find(
-          market => market.underlyingSymbol.toLowerCase() === item.toLowerCase()
+  useEffect(() => {
+    async function update() {
+      console.log('======== update period')
+      const res = await promisify(getGovernanceVenus, {});
+      if (!res.status) {
+        return;
+      }
+      const markets = Object.keys(constants.CONTRACT_VBEP_ADDRESS)
+        .map(item =>
+          res.data.markets.find(
+            market =>
+              market.underlyingSymbol.toLowerCase() === item.toLowerCase()
+          )
         )
-      )
-      .filter(item => !!item);
+        .filter(item => !!item);
 
-    await updateStakingInfoByMarketData();
+      await updateStakingInfoByMarketData();
 
-    setSetting({
-      markets,
-      dailyVenus: res.data.dailyVenus
-    });
-  }, [fast]);
+      setSetting({
+        markets,
+        dailyVenus: res.data.dailyVenus
+      });
+    }
+    update();
+  }, [slow]);
 
   return (
     <SidebarWrapper>
@@ -343,6 +350,7 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
       <ConnectModal
         visible={isOpenModal}
         onCancel={() => setIsOpenModal(false)}
+        onConnected={() => setIsOpenModal(false)}
       />
     </SidebarWrapper>
   );
