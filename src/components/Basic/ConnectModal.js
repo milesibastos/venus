@@ -131,15 +131,14 @@ function ConnectModal({ visible, onCancel, onConnected, setSetting }) {
 
   useInactiveListener({
     handleChainChanged: (chainId) => {
-      console.log('chain changed');
-      if (currentConnector) {
-        connect(getConnectorNameByConnector(currentConnector));
-      }
+      console.log('==== currentConnector,', currentConnector)
     }
   });
 
   useEffect(() => {
     setCurrentConnector(connector);
+    console.log('===== update connectmodal', activatingConnector, connector, error, account);
+
     if (activatingConnector && activatingConnector === connector) {
       setActivatingConnector(undefined);
     }
@@ -195,6 +194,7 @@ function ConnectModal({ visible, onCancel, onConnected, setSetting }) {
     if (!connectorByName) {
       throw new Error(`unsupported connector`);
     }
+    
     setActivatingConnector(connectorByName);
     connect(connectorName);
   }

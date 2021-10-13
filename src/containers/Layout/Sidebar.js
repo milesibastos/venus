@@ -33,6 +33,7 @@ import {
   MobileMenuWrapper
 } from 'containers/Layout/SidebarStyled';
 import { useRefresh } from 'utilities/hooks/useRefresh';
+import { useWeb3React } from '@web3-react/core';
 
 const { Option } = Select;
 
@@ -92,6 +93,18 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
     initSettings();
   }, []);
 
+  // refresh latestBlockNumber
+  const { chainId, library } = useWeb3React();
+  useEffect(() => {
+    if (library) {
+      library.getBlockNumber().then(blockNumber => {
+        setSetting({
+          latestBlockNumber: blockNumber
+        });
+      });
+    }
+  }, [chainId, library]);
+
   const updateStakingInfoByMarketData = async () => {
     const appContract = getComptrollerContract();
     const vaiContract = getVaiTokenContract();
@@ -145,7 +158,7 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
   // periodically request backend data
   useEffect(() => {
     async function update() {
-      console.log('======== update period')
+      console.log('======== update period');
       const res = await promisify(getGovernanceVenus, {});
       if (!res.status) {
         return;

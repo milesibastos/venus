@@ -24,6 +24,7 @@ export function useInactiveListener({
         ethereum.on('networkChanged', handleNetworkChanged);
 
       return () => {
+        console.log('====== use inactive listener remove')
         if (ethereum.removeListener) {
           handleConnect && ethereum.removeListener('connect', handleConnect);
           handleChainChanged &&

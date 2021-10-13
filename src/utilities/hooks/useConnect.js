@@ -16,8 +16,10 @@ export const useConnect = () => {
     connectorID => {
       const connector = connectorNameMap[connectorID];
       if (connector) {
+        console.log('====== connecting to', connector)
         activate(connector, async error => {
           setError(error);
+          console.log(`====== connect error`, error);
           if (!error) {
             setLocalConnectId(connectorID);
             toast.dismiss();
@@ -26,10 +28,17 @@ export const useConnect = () => {
               title: convertErrorMessage(error, connector)
             });
           }
-          if (error instanceof UnsupportedChainIdError) {
+          if (
+            error instanceof UnsupportedChainIdError &&
+            connectorID === ConnectorNames.INJECTED
+          ) {
             const hasSetup = await setupNetwork();
+            console.log('====== hasSetup', hasSetup)
             if (hasSetup) {
-              activate(connector);
+              activate(connector, error => {
+                setError(error);
+                console.log(`==== connect error after setup`, error);
+              });
             }
           } else {
             setLocalConnectId('');
