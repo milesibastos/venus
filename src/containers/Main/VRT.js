@@ -8,18 +8,18 @@ import commaNumber from 'comma-number';
 import NumberFormat from 'react-number-format';
 import { Row, Col } from 'antd';
 import styled from 'styled-components';
+import { useWeb3React } from '@web3-react/core';
 import { connectAccount, accountActionCreators } from 'core';
-import {
-  getTokenContract,
-  getComptrollerContract,
-  methods
-} from 'utilities/ContractService';
+// import {
+//   getTokenContract,
+//   getComptrollerContract
+// } from '../utilities/contractHelpers';
 import MainLayout from 'containers/Layout/MainLayout';
-import * as constants from 'utilities/constants';
 import vrtImg from 'assets/img/coins/vrt.png';
 import xvsImg from 'assets/img/coins/xvs.png';
 import RedeemConfirmModal from 'components/VRT/RedeemConfirmModal';
 import RedeemSuccessModal from 'components/VRT/RedeemSuccessModal';
+import ConnectModal from '../../components/Basic/ConnectModal';
 
 const commaFormater = commaNumber.bindWith(',', '.');
 
@@ -161,7 +161,7 @@ const formatNextCircleString = () => {
   return `2021-11-11`;
 };
 
-function VRT({ settings }) {
+function VRT({ settings, setSetting }) {
   const [redeemRatio, setRedeemRatio] = useState(new BigNumber(1));
   const [redeemableAmount, setRedeemableAmount] = useState(new BigNumber(0));
   const [nextCircle, setNextCircle] = useState(0);
@@ -172,11 +172,13 @@ function VRT({ settings }) {
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const [txHash, setTxHash] = useState('');
+  // wallet connect button
+  const [showConnectModal, setShowConnectModal] = useState(false);
+  const { account } = useWeb3React();
 
-  const accountNotReady =
-    !settings.selectedAddress ||
-    settings.accountLoading ||
-    settings.wrongNetwork;
+  const onClose = () => {
+    setShowConnectModal(false);
+  };
 
   // @todo: to be replaced by send tx
   const confirmRedeem = async () => {
@@ -275,7 +277,7 @@ function VRT({ settings }) {
                   </div>
                   <p className="redeem-details-input-desc">
                     Balance:
-                    {accountNotReady ? '-' : userVRTBalance.toFixed(2)}
+                    {account ? '-' : userVRTBalance.toFixed(2)}
                   </p>
                   <div className="redeem-details-input-error-text">
                     {inputValid ? ' ' : 'Insufficient VRT balance'}
@@ -299,16 +301,20 @@ function VRT({ settings }) {
                   </div>
                 </div>
                 {/* connect & redeem button */}
-                <div
-                  className="redeem-button center"
-                  onClick={() => {
-                    if (!accountNotReady) {
-                      setIsConfirmModalVisible(true);
-                    }
-                  }}
-                >
-                  {accountNotReady ? 'Connect' : 'Redeem'}
-                </div>
+                {
+                  <div
+                    className="redeem-button center"
+                    onClick={() => {
+                      if (account) {
+                        setIsConfirmModalVisible(true);
+                      } else {
+                        setShowConnectModal(true);
+                      }
+                    }}
+                  >
+                    {account ? 'Redeem' : 'Connect'}
+                  </div>
+                }
               </div>
             </Col>
           </Row>
@@ -333,6 +339,7 @@ function VRT({ settings }) {
           txHash={txHash}
         />
       </MainLayout>
+      <ConnectModal visible={showConnectModal} onClose={onClose} />
     </VRTLayout>
   );
 }
@@ -350,10 +357,11 @@ const mapStateToProps = ({ account }) => ({
 });
 
 const mapDispatchToProps = dispatch => {
-  const { getVoterAccounts } = accountActionCreators;
+  const { getVoterAccounts, setSetting } = accountActionCreators;
 
   return bindActionCreators(
     {
+      setSetting,
       getVoterAccounts
     },
     dispatch

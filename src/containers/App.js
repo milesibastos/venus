@@ -69,6 +69,7 @@ class App extends React.Component {
                   <Route exact path="/transaction" component={Transaction} />
                   <Route exact path="/vault" component={Vault} />
                   <Route exact path="/market/:asset" component={MarketDetail} />
+                  <Route exact path="/vrt" component={VRT} />
                   <Route
                     exact
                     path="/vote/leaderboard"
