@@ -41,3 +41,16 @@ export const getXvsVaultStoreAddress = () => {
 export const getGovernorBravoAddress = () => {
   return addresses.governorBravoDelegator[chainId];
 };
+
+// VRT conversion
+export const getXvsVestingAddress = () => {
+  return addresses.xvsVesting[chainId];
+};
+
+export const getVrtTokenAddress = () => {
+  return addresses.vrtToken[chainId];
+};
+
+export const getVrtConverterAddress = () => {
+  return addresses.vrtConverter[chainId];
+};

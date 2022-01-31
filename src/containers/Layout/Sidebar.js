@@ -23,7 +23,7 @@ import { getVaiVaultAddress } from '../../utilities/addressHelpers';
 
 const SidebarWrapper = styled.div`
   height: 100vh;
-  min-width: 108px;
+  min-width: 116px;
   border-radius: 0 16px 16px 0;
   background-color: var(--color-bg-primary);
   display: flex;
@@ -75,12 +75,6 @@ const MainMenu = styled.div`
 
   .xvs-active-icon {
     display: none;
-  }
-
-  .outlink-icon {
-    width: 16px;
-    margin-left: 11%;
-    margin-right: 12%;
   }
 
   a {
@@ -256,7 +250,7 @@ const { Option } = Select;
 
 const format = commaNumber.bindWith(',', '.');
 
-function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
+function Sidebar({ history, setSetting }) {
   const [isMarketInfoUpdating, setMarketInfoUpdating] = useState(false);
   const [totalVaiMinted, setTotalVaiMinted] = useState('0');
   const [tvl, setTVL] = useState(new BigNumber(0));
@@ -413,6 +407,14 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
         </NavLink>
         <NavLink
           className="flex flex-start align-center"
+          to="/redeem-vrt"
+          active-class-name="active"
+        >
+          <Icon type="swap"/>
+          <Label primary>Redeem VRT</Label>
+        </NavLink>
+        <NavLink
+          className="flex flex-start align-center"
           to="/transaction"
           active-class-name="active"
         >
@@ -443,7 +445,7 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
           active-class-name="active"
         >
           <img src={prdtImg} alt="prdt" className="outlink-icon" />
-          <Label primary>XVS Prediction</Label>
+          <Label primary>Prediction</Label>
         </a>
         <a
           // eslint-disable-next-line react/jsx-no-target-blank
@@ -526,6 +528,11 @@ function Sidebar({ history, settings, setSetting, getGovernanceVenus }) {
           <Option className="flex align-center just-center" value="vault">
             <Label size={14} primary>
               Vault
+            </Label>
+          </Option>
+          <Option className="flex align-center just-center" value="redeem-vrt">
+            <Label size={14} primary>
+              Redeem VRT
             </Label>
           </Option>
           <Option className="flex align-center just-center" value="transaction">

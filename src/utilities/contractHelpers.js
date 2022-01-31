@@ -13,6 +13,9 @@ import vbnbAbi from '../config/abis/vbnb.json';
 import xvsAbi from '../config/abis/xvs.json';
 import venusLensAbi from '../config/abis/venusLens.json';
 import governorBravoAbi from '../config/abis/governorBravoDelegate.json';
+import xvsVestingAbi from '../config/abis/xvsVesting.json';
+import vrtConverterAbi from '../config/abis/vrtConverter.json';
+import vrtTokenAbi from '../config/abis/vrtToken.json';
 import {
   getComptrollerAddress,
   getOracleAddress,
@@ -22,7 +25,10 @@ import {
   getXvsVaultAddress,
   getXvsVaultProxyAddress,
   getVenusLensAddress,
-  getGovernorBravoAddress
+  getGovernorBravoAddress,
+  getXvsVestingAddress,
+  getVrtConverterAddress,
+  getVrtTokenAddress
 } from './addressHelpers';
 import * as constants from './constants';
 
@@ -94,4 +100,17 @@ export const getVenusLensContract = web3 => {
 
 export const getGovernorBravoContract = web3 => {
   return getContract(governorBravoAbi, getGovernorBravoAddress(), web3);
+};
+
+// VRT conversion
+export const getXvsVestingContract = web3 => {
+  return getContract(xvsVestingAbi, getXvsVestingAddress(), web3);
+};
+
+export const getVrtConverterContract = web3 => {
+  return getContract(vrtConverterAbi, getVrtConverterAddress(), web3);
+};
+
+export const getVrtTokenContract = web3 => {
+  return getContract(vrtTokenAbi, getVrtTokenAddress(), web3);
 };

@@ -12,7 +12,10 @@ import {
   getXvsVaultProxyContract,
   getXvsVaultContract,
   getTokenContractByAddress,
-  getGovernorBravoContract
+  getGovernorBravoContract,
+  getVrtConverterContract,
+  getXvsVestingContract,
+  getVrtTokenContract
 } from '../utilities/contractHelpers';
 import useWeb3 from './useWeb3';
 
@@ -82,4 +85,20 @@ export const useXvsVaultProxy = () => {
 export const useGovernorBravo = () => {
   const web3 = useWeb3();
   return useMemo(() => getGovernorBravoContract(web3), [web3]);
+};
+
+// VRT conversion
+export const useVrtConverter = () => {
+  const web3 = useWeb3();
+  return useMemo(() => getVrtConverterContract(web3), [web3]);
+};
+
+export const useXvsVesting = () => {
+  const web3 = useWeb3();
+  return useMemo(() => getXvsVestingContract(web3), [web3]);
+};
+
+export const useVrtToken = () => {
+  const web3 = useWeb3();
+  return useMemo(() => getVrtTokenContract(web3), [web3]);
 };

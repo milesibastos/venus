@@ -19,6 +19,7 @@ import VoteOverview from 'containers/Main/VoteOverview';
 import ProposerDetail from 'containers/Main/ProposerDetail';
 import VoterLeaderboard from 'containers/Main/VoterLeaderboard';
 import Transaction from 'containers/Main/Transaction';
+import { VrtConversion } from 'containers/Main/VrtConversion';
 import Theme from './Theme';
 
 import 'assets/styles/App.scss';
@@ -75,6 +76,11 @@ class App extends React.Component {
                         component={Transaction}
                       />
                       <Route exact path="/vault" component={Vault} />
+                      <Route
+                        exact
+                        path="/redeem-vrt"
+                        component={VrtConversion}
+                      />
                       <Route
                         exact
                         path="/market/:asset"
