@@ -65,7 +65,6 @@ class App extends React.Component {
                       atActive={{ opacity: 1 }}
                       className="switch-wrapper"
                     >
-                      <Route exact path="/dashboard" component={Dashboard} />
                       <Route exact path="/vote" component={Vote} />
                       <Route exact path="/xvs" component={XVS} />
                       <Route exact path="/market" component={Market} />
@@ -98,7 +97,7 @@ class App extends React.Component {
                       {process.env.REACT_APP_CHAIN_ID === '97' && (
                         <Route exact path="/faucet" component={Faucet} />
                       )}
-                      <Redirect from="/" to="/dashboard" />
+                      <Route exact path="/" component={Dashboard} />
                     </Switch>
                   </BrowserRouter>
                 </MarketContextProvider>
